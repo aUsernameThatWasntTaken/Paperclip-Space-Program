@@ -2,6 +2,8 @@ import game
 import tkinter
 import time
 
+largeLabelFont = ("Segoe UI", 18)
+
 screen = tkinter.Tk()
 screen.title("PaperClip Space Program")
 #Defines a frame for the tutorial text, next, and skip tutorial buttons.
@@ -24,7 +26,7 @@ class ColonyManagement:
     def __init__(self, targetScreen: tkinter.Misc):
         self.frame = tkinter.Frame(targetScreen)   # A 2 by 2 grid.
 
-        self.label = tkinter.Label(self.frame, text="Colony Management", font=("Segoe UI",18))
+        self.label = tkinter.Label(self.frame, text="Colony Management", font=largeLabelFont)
         self.label.grid(row=0,column=0)
 
         self.productionMenu = tkinter.Label(self.frame, text="Colony Production")  #change this later
@@ -37,13 +39,22 @@ class ColonyManagement:
         self.buildMenu = tkinter.Label(self.frame, text="Colony build menu") #Change this later too.
         self.buildMenu.grid(row=1, column=1)
     
-    def grid(self, row: int, column: int):
-        self.frame.grid(row=row, column=column)
+    def grid(self, row: int, column: int, rowSpan = 1, columnSpan = 1):
+        self.frame.grid(row=row, column=column, rowspan=rowSpan, columnspan=columnSpan)
 
 
 
 colonyManagement = ColonyManagement(screen)  #A 2 by 2 grid.
 colonyManagement.grid(row=1, column=0)
+
+colonyResourceDashboard = tkinter.Label(screen, text="Colonisation Dashboard", font=largeLabelFont)
+colonyResourceDashboard.grid(row=1,column=1)
+
+drawingBoard = tkinter.Label(screen, text="Drawing Board", font=largeLabelFont)
+drawingBoard.grid(row = 2, column = 1)
+
+researchMenu = tkinter.Label(screen, text="Research Menu", font=largeLabelFont)
+researchMenu.grid(row=1, column=2, rowspan=2)
 
 running = True
 def close():
