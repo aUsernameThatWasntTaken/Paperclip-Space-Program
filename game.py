@@ -15,6 +15,14 @@ class SaveData:
         self.money: int = jsonDict["money"]
         self.tutorialProgress: int = jsonDict["tutorialProgress"]
 
+class CelestialBody:
+    def __init__(self, name: str, displayedName: str|None = None):
+        self.name = name
+        if displayedName is None:
+            self.displayedName = self.name
+        else:
+            self.displayedName = displayedName
+
 with open("saveData.json") as f:
     try:
         saveData = SaveData(json.load(f))
@@ -34,12 +42,12 @@ def tutorialNext():
 def tutorialSkip():
     saveData.tutorialProgress = -1
 
-Planets = [
-    "Earth",
-    "Luna (moon of Earth)",
-    "Mars",
-    "Deimos (moon of Mars)",
-    "Phobos (moon of Mars)"
+celestialBodies: list[CelestialBody] = [
+    CelestialBody("Earth"),
+    CelestialBody("Luna","Luna (moon of Earth)"),
+    CelestialBody("Mars"),
+    CelestialBody("Deimos","Deimos (moon of Mars)"),
+    CelestialBody("Phobos","Phobos (moon of Mars)")
 ]
 
 paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."

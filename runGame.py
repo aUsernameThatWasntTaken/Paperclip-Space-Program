@@ -33,7 +33,7 @@ class ColonyManagement:
         self.productionMenu.grid(row=1,column=0)
 
         self.selectedPlanet = tkinter.StringVar(value="Select Planet/Moon")
-        self.planetSelection = tkinter.OptionMenu(self.frame, self.selectedPlanet, *game.Planets)
+        self.planetSelection = tkinter.OptionMenu(self.frame, self.selectedPlanet, *[body.displayedName for body in game.celestialBodies])
         self.planetSelection.grid(row=0,column=1)
 
         self.buildMenu = tkinter.Label(self.frame, text="Colony build menu") #Change this later too.
