@@ -42,12 +42,20 @@ class ColonyManagement:
     def grid(self, row: int, column: int, rowSpan = 1, columnSpan = 1):
         self.frame.grid(row=row, column=column, rowspan=rowSpan, columnspan=columnSpan)
 
+class ColonyResourceDashboard:
+    def __init__(self, targetScreen):
+        self.frame = tkinter.Frame(targetScreen, highlightbackground="black", highlightthickness=2)
 
+        self.label = tkinter.Label(self.frame, text="Colonisation Dashboard", font=largeLabelFont)
+        self.label.pack()
+
+    def grid(self, row: int, column: int):
+        self.frame.grid(row=row,column=column)
 
 colonyManagement = ColonyManagement(screen)  #A 2 by 2 grid.
 colonyManagement.grid(row=1, column=0)
 
-colonyResourceDashboard = tkinter.Label(screen, text="Colonisation Dashboard", font=largeLabelFont)
+colonyResourceDashboard = ColonyResourceDashboard(screen)
 colonyResourceDashboard.grid(row=1,column=1)
 
 drawingBoard = tkinter.Label(screen, text="Drawing Board", font=largeLabelFont)
