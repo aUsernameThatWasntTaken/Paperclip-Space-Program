@@ -20,22 +20,29 @@ moneyStrVar = tkinter.StringVar(value=("Available funds: "+str(game.saveData.mon
 moneyTeller = tkinter.Label(screen, textvariable=moneyStrVar)
 moneyTeller.grid(row=0,column=0)
 
-# colony management Dashboard TODO: Put this in a class to allow making the names shorter
-colonyManagement = tkinter.Frame(screen)  #A 2 by 2 grid.
+class ColonyManagement:
+    def __init__(self, targetScreen: tkinter.Misc):
+        self.frame = tkinter.Frame(targetScreen)   # A 2 by 2 grid.
 
-colonyManagementLabel = tkinter.Label(colonyManagement, text="Colony Management", font=("Segoe UI",18))
-colonyManagementLabel.grid(row=0,column=0)
+        self.label = tkinter.Label(self.frame, text="Colony Management", font=("Segoe UI",18))
+        self.label.grid(row=0,column=0)
 
-colonyManagementProductionMenu = tkinter.Label(colonyManagement, text="Colony Production")  #change this later
-colonyManagementProductionMenu.grid(row=1,column=0)
+        self.productionMenu = tkinter.Label(self.frame, text="Colony Production")  #change this later
+        self.productionMenu.grid(row=1,column=0)
 
-colonyManagementSelectedPlanet = tkinter.StringVar(value="Select Planet/Moon")
-colonyManagementPlanetSelection = tkinter.OptionMenu(colonyManagement, colonyManagementSelectedPlanet, *game.Planets)
-colonyManagementPlanetSelection.grid(row=0,column=1)
+        self.selectedPlanet = tkinter.StringVar(value="Select Planet/Moon")
+        self.planetSelection = tkinter.OptionMenu(self.frame, self.selectedPlanet, *game.Planets)
+        self.planetSelection.grid(row=0,column=1)
 
-colonyManagementBuildMenu = tkinter.Label(colonyManagement, text="Colony build menu") #Change this later too.
-colonyManagementBuildMenu.grid(row=1, column=1)
+        self.buildMenu = tkinter.Label(self.frame, text="Colony build menu") #Change this later too.
+        self.buildMenu.grid(row=1, column=1)
+    
+    def grid(self, row: int, column: int):
+        self.frame.grid(row=row, column=column)
 
+
+
+colonyManagement = ColonyManagement(screen)  #A 2 by 2 grid.
 colonyManagement.grid(row=1, column=0)
 
 running = True
