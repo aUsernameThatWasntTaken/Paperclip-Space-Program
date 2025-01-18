@@ -2,6 +2,8 @@
 
 import json
 
+#TODO: Add planet class
+
 defaultSaveData = {
     "money":100,
     "tutorialProgress":0
@@ -11,7 +13,7 @@ class SaveData:
     """Takes the dictionary from json.load and objectifies it."""
     def __init__(self, jsonDict: dict = defaultSaveData):
         self.money: int = jsonDict["money"]
-        self.tutorialProgress = jsonDict["tutorialProgress"]
+        self.tutorialProgress: int = jsonDict["tutorialProgress"]
 
 with open("saveData.json") as f:
     try:
@@ -28,6 +30,17 @@ def tutorialNext():
     if saveData.tutorialProgress >= len(tutorialText):
         saveData.tutorialProgress = -1
         return
+
+def tutorialSkip():
+    saveData.tutorialProgress = -1
+
+Planets = [
+    "Earth",
+    "Luna (moon of Earth)",
+    "Mars",
+    "Deimos (moon of Mars)",
+    "Phobos (moon of Mars)"
+]
 
 paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
 tutorialText = [f"""Welcome to PaperClip Space Program! {paperClipCompanyName} (the first company to employ a Superintelligent AGI as 
