@@ -16,7 +16,7 @@ if game.saveData.tutorialProgress != -1:
     tutorialNextButton.grid(row=0,column=1)
     tutorialSkipButton = tkinter.Button(tutorial,text="Skip", command=game.tutorialSkip)
     tutorialSkipButton.grid(row=0,column=2)
-    tutorial.grid(row=0,column=1)
+    tutorial.grid(row=0,column=1, columnspan=2)
 #</Tutorial>
 moneyStrVar = tkinter.StringVar(value=("Available funds: "+str(game.saveData.money)))
 moneyTeller = tkinter.Label(screen, textvariable=moneyStrVar)
