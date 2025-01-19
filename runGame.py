@@ -85,6 +85,8 @@ screen.protocol("WM_DELETE_WINDOW", close)
 
 while running:
     time.sleep(1/30)
+    if colonyResourceDashboard.selectedBody.get() != "Select Planet/Moon":
+        colonyResourceDashboard.colonyCrewCounter.set(f"Crew: {[colony.crew for colony in game.saveData.colonies if colony.body == game.bodyDisplayedNameToNameConverter(colonyResourceDashboard.selectedBody.get())][0]}")
     if game.saveData.tutorialProgress == -1:
         tutorial.destroy()
     else:
