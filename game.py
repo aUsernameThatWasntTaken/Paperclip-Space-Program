@@ -2,18 +2,20 @@
 
 import json
 
-#TODO: Add planet class
+#TODO: Add body class
 
 defaultSaveData = {
     "money":100,
-    "tutorialProgress":0
+    "tutorialProgress":0,
+    "colonies":[{"body":"Earth"}]
     }
 
 class SaveData:
     """Takes the dictionary from json.load and objectifies it."""
     def __init__(self, jsonDict: dict = defaultSaveData):
-        self.money: int = jsonDict["money"]
-        self.tutorialProgress: int = jsonDict["tutorialProgress"]
+        self.money: int = jsonDict.get("money", defaultSaveData["money"])
+        self.tutorialProgress: int = jsonDict.get("tutorialProgress", 0)
+        self.colonies: list[Colony] = [Colony(colony) for colony in jsonDict.get("colonies",defaultSaveData["colonies"])]
 
 class CelestialBody:
     def __init__(self, name: str, displayedName: str|None = None):
@@ -22,6 +24,18 @@ class CelestialBody:
             self.displayedName = self.name
         else:
             self.displayedName = displayedName
+
+class Colony:
+    def __init__(self, jsonDict: dict):
+        self.body = jsonDict["body"]
+        self.crew = jsonDict.get("crew", 0)
+
+def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
+    matchingBodies = [body.name for body in celestialBodies if body.displayedName == bodyDisplayedName]
+    if len(matchingBodies) != 1:
+        raise RuntimeError(f"""Encountered invalid Body Display name: {bodyDisplayedName}. 
+                           There were {len(matchingBodies)} bodies with that displayed name.""")
+    return matchingBodies[0]
 
 with open("saveData.json") as f:
     try:
