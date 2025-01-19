@@ -67,6 +67,21 @@ class ColonyResourceDashboard:
     def grid(self, row: int, column: int, sticky: str = ""):
         self.frame.grid(row=row,column=column, sticky=sticky)
 
+class DrawingBoard:
+    def __init__(self, targetFrame: tkinter.Misc):
+        self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
+        self.grid = self.frame.grid
+
+        self.label = tkinter.Label(self.frame, text="Drawing Board", font=largeLabelFont)
+        self.label.grid(row=0, column=0, columnspan=2)
+
+        self.shipNameLabel = tkinter.Label(self.frame, text="Ship Name: ")
+        self.shipNameLabel.grid(row=1, column=0)
+        self.shipName = tkinter.StringVar(value="Untitled Spacecraft")
+        self.shipNameTextbox = tkinter.Entry(self.frame, textvariable=self.shipName)
+        self.shipNameTextbox.grid(row=1,column=1)
+
+
 class ResearchMenu:
     def __init__(self, targetFrame):
         self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
@@ -91,8 +106,8 @@ colonyManagement.grid(row=1, column=0, sticky="news", rowSpan=2)
 colonyResourceDashboard = ColonyResourceDashboard(screen)
 colonyResourceDashboard.grid(row=1,column=1, sticky = "new")
 
-drawingBoard = tkinter.Label(screen, text="Drawing Board", font=largeLabelFont)
-drawingBoard.grid(row = 2, column = 1)
+drawingBoard = DrawingBoard(screen)
+drawingBoard.grid(row = 2, column = 1, sticky="EW")
 
 researchMenu = ResearchMenu(screen)
 researchMenu.grid(row=1, column=2, rowSpan=2, sticky="news")
