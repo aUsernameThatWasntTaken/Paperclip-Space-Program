@@ -11,12 +11,15 @@ defaultSaveData = {
     "unlockedNodes":[]
     }
 
+paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
+
 class TechTreeNode:
-    def __init__(self,name: str, displayedName: str, prerequisites: list[str], unlocks: list[str]):
+    def __init__(self,name: str, displayedName: str, prerequisites: list[str], unlocks: list[str], desc: str):
         self.prerequisites = prerequisites
         self.name = name #works like an ID
         self.displayedName = displayedName
         self.unlocks = unlocks
+        self.desc = desc
 
     def canUnlock(self):
         returnBool = True
@@ -54,7 +57,10 @@ def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
     return matchingBodies[0]
 
 TechTreeNodes: list[TechTreeNode] = [
-    TechTreeNode("Root", "Start", [], [])
+    TechTreeNode("Root", "Start", [], [], 
+                 f"""As part of their sponsorship, {paperClipCompanyName} has kindly provided us with 10 researchers to get us started! 
+                 They should be able to complete this bit of research in around 2 months, but with how much fun we're having,
+                 it will only feel like 10 seconds.""")
 ]
 
 with open("saveData.json") as f:
@@ -84,7 +90,6 @@ celestialBodies: list[CelestialBody] = [
     CelestialBody("Phobos","Phobos (moon of Mars)")
 ]
 
-paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
 tutorialText = [f"""Welcome to PaperClip Space Program! {paperClipCompanyName} (the first company to employ a Superintelligent AGI as 
                 its CEO) has recently decided to help fund our space program!""",
                 "This works fine."]
