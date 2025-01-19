@@ -24,7 +24,7 @@ moneyTeller.grid(row=0,column=0)
 
 class ColonyManagement:
     def __init__(self, targetScreen: tkinter.Misc):
-        self.frame = tkinter.Frame(targetScreen)   # A 2 by 2 grid.
+        self.frame = tkinter.Frame(targetScreen, highlightbackground="black", highlightthickness=2)   # A 2 by 2 grid.
 
         self.label = tkinter.Label(self.frame, text="Colony Management", font=largeLabelFont)
         self.label.grid(row=0,column=0)
@@ -48,6 +48,17 @@ class ColonyResourceDashboard:
 
         self.label = tkinter.Label(self.frame, text="Colonisation Dashboard", font=largeLabelFont)
         self.label.pack()
+
+        self.productionConsumptionView = tkinter.Label(self.frame, text="(Production and consumption values for different resources go here.)")
+        self.productionConsumptionView.pack()
+
+        self.colonyCrewCounter = tkinter.StringVar(value="(Crew amount goes here)")
+        self.colonyCrewCounterLabel = tkinter.Label(self.frame, textvariable=self.colonyCrewCounter)
+        self.colonyCrewCounterLabel.pack()
+
+        self.selectedBody = tkinter.StringVar(value="Select Planet/Moon")
+        self.bodySelector = tkinter.OptionMenu(self.frame, self.selectedBody, *[body.displayedName for body in game.celestialBodies])
+        self.bodySelector.pack()
 
     def grid(self, row: int, column: int):
         self.frame.grid(row=row,column=column)
