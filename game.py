@@ -7,8 +7,23 @@ import json
 defaultSaveData = {
     "money":100,
     "tutorialProgress":0,
-    "colonies":[{"body":"Earth"}]
+    "colonies":[{"body":"Earth"}],
+    "unlockedNodes":[]
     }
+
+class TechTreeNode:
+    def __init__(self,name: str, displayedName: str, prerequisites: list[str], unlocks: list[str]):
+        self.prerequisites = prerequisites
+        self.name = name #works like an ID
+        self.displayedName = displayedName
+        self.unlocks = unlocks
+
+    def canUnlock(self):
+        returnBool = True
+        for prerequisite in self.prerequisites:
+            if prerequisite not in saveData.unlockedNodes:
+                returnBool = False
+        return returnBool
 
 class SaveData:
     """Takes the dictionary from json.load and objectifies it."""
@@ -16,6 +31,7 @@ class SaveData:
         self.money: int = jsonDict.get("money", defaultSaveData["money"])
         self.tutorialProgress: int = jsonDict.get("tutorialProgress", 0)
         self.colonies: list[Colony] = [Colony(colony) for colony in jsonDict.get("colonies",defaultSaveData["colonies"])]
+        self.unlockedNodes: list[str] = jsonDict.get("unlockedNodes", defaultSaveData["unlockedNodes"])
 
 class CelestialBody:
     def __init__(self, name: str, displayedName: str|None = None):
@@ -36,6 +52,10 @@ def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
         raise RuntimeError(f"""Encountered invalid Body Display name: {bodyDisplayedName}. 
                            There were {len(matchingBodies)} bodies with that displayed name.""")
     return matchingBodies[0]
+
+TechTreeNodes: list[TechTreeNode] = [
+    TechTreeNode("Root", "Start", [], [])
+]
 
 with open("saveData.json") as f:
     try:
