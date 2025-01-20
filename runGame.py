@@ -123,7 +123,14 @@ screen.protocol("WM_DELETE_WINDOW", close)
 while running:
     time.sleep(1/30)
     if colonyResourceDashboard.selectedBody.get() != "Select Planet/Moon":
-        colonyResourceDashboard.colonyCrewCounter.set(f"Crew: {[colony.crew for colony in game.saveData.colonies if colony.body == game.bodyDisplayedNameToNameConverter(colonyResourceDashboard.selectedBody.get())][0]}")
+        nameOfSelectedBody = game.bodyDisplayedNameToNameConverter(colonyResourceDashboard.selectedBody.get())
+        crewNumbersFound = [colony.crew for colony in game.saveData.colonies if colony.body == nameOfSelectedBody]
+        if len(crewNumbersFound) > 1:
+            raise RuntimeError(f"There are {len(crewNumbersFound)} colonies that are on the body {nameOfSelectedBody}. There should be 1")
+        elif len(crewNumbersFound) == 1:
+            colonyResourceDashboard.colonyCrewCounter.set(f"Crew: {crewNumbersFound[0]}")
+        else:
+            colonyResourceDashboard.colonyCrewCounter.set(f"{nameOfSelectedBody} has no colony.")
     if game.saveData.tutorialProgress == -1:
         tutorial.destroy()
     else:

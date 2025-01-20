@@ -46,14 +46,13 @@ class CelestialBody:
 
 class Colony:
     def __init__(self, jsonDict: dict):
-        self.body = jsonDict["body"]
-        self.crew = jsonDict.get("crew", 0)
+        self.body: str = jsonDict["body"]
+        self.crew: int = jsonDict.get("crew", 0)
 
 def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
     matchingBodies = [body.name for body in celestialBodies if body.displayedName == bodyDisplayedName]
     if len(matchingBodies) != 1:
-        raise RuntimeError(f"""Encountered invalid Body Display name: {bodyDisplayedName}. 
-                           There were {len(matchingBodies)} bodies with that displayed name.""")
+        raise RuntimeError(f"Encountered invalid Body Display name: {bodyDisplayedName}. There were {len(matchingBodies)} bodies with that displayed name.")
     return matchingBodies[0]
 
 TechTreeNodes: list[TechTreeNode] = [
