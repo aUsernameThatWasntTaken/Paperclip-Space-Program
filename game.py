@@ -49,6 +49,12 @@ class Colony:
         self.body: str = jsonDict["body"]
         self.crew: int = jsonDict.get("crew", 0)
 
+class Parts:
+    class ControlUnit:
+        def __init__(self, name: str):
+            self.name = name
+    controlUnits: list[ControlUnit] = [ControlUnit(name="Mercury Command Pod")]
+
 def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
     matchingBodies = [body.name for body in celestialBodies if body.displayedName == bodyDisplayedName]
     if len(matchingBodies) != 1:

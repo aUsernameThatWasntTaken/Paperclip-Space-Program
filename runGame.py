@@ -81,6 +81,11 @@ class DrawingBoard:
         self.shipNameTextbox = tkinter.Entry(self.frame, textvariable=self.shipName)
         self.shipNameTextbox.grid(row=1,column=1)
 
+        self.contolUnitLabel = tkinter.Label(self.frame, text="Ship's contol Unit: ")
+        self.contolUnitLabel.grid(row=2, column=0)
+        self.shipControlUnit = tkinter.StringVar(value="Select a Contol Unit")
+        self.contolUnitDropdown = tkinter.OptionMenu(self.frame, self.shipControlUnit, *[part.name for part in game.Parts.controlUnits])
+        self.contolUnitDropdown.grid(row=2, column=1)
 
 class ResearchMenu:
     def __init__(self, targetFrame):
