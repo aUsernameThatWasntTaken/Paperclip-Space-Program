@@ -39,6 +39,7 @@ class SaveData:
         self.tutorialProgress: int = jsonDict.get("tutorialProgress", 0)
         self.colonies: list[Colony] = [Colony(colony) for colony in jsonDict.get("colonies",defaultSaveData["colonies"])]
         self.unlockedNodes: list[str] = jsonDict.get("unlockedNodes", defaultSaveData["unlockedNodes"])
+        self.spacecraftDesigns: list[SpacecraftDesign] = [SpacecraftDesign(**spacecraftDict) for spacecraftDict in jsonDict.get("SpacecraftDesigns", [])]
 
 class CelestialBody:
     def __init__(self, name: str, displayedName: str|None = None):
@@ -74,7 +75,7 @@ class Parts:
     thrusters: list[Thruster] = [Thruster(name = "RocketDyne A7")]
     fuelTanks: list[FuelTank] = [FuelTank(name = "Cylindrical")]
 
-class Spacecraft:
+class SpacecraftDesign:
     def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: str):
         self.name = name
         self.type = type

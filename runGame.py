@@ -110,6 +110,11 @@ class DrawingBoard:
         self.controlUnit = LabeledDropdown(self.frame, 2, 0, "Ship's contol Unit: ", "Select a Contol Unit", *[part.name for part in game.Parts.controlUnits])
         self.thrusters = LabeledDropdown(self.frame, 3, 0, "Ship's Thrusters: ", "Select a type of Thruster", *[part.name for part in game.Parts.thrusters])
         self.fuelTank = LabeledDropdown(self.frame, 4,0, "Fuel Tank: ", "Select Fuel Tank", *[part.name for part in game.Parts.fuelTanks])
+        self.saveShipButton = tkinter.Button(self.frame, command=self.saveShip, text="Save Ship")
+        self.saveShipButton.grid(row=5, column=0)
+    
+    def saveShip(self):
+        game.saveData.spacecraftDesigns.append(game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), self.fuelTank.get()))
 
 class ResearchMenu:
     def __init__(self, targetFrame):
