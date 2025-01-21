@@ -52,6 +52,7 @@ class ColonyManagement:
 class ColonyResourceDashboard:
     def __init__(self, targetScreen):
         self.frame = tkinter.Frame(targetScreen, highlightbackground="black", highlightthickness=2)
+        self.grid = self.frame.grid
 
         self.label = tkinter.Label(self.frame, text="Colonisation Dashboard", font=largeLabelFont)
         self.label.pack()
@@ -66,9 +67,18 @@ class ColonyResourceDashboard:
         self.selectedBody = tkinter.StringVar(value="Select Planet/Moon")
         self.bodySelector = tkinter.OptionMenu(self.frame, self.selectedBody, *[body.displayedName for body in game.celestialBodies])
         self.bodySelector.pack()
-
-    def grid(self, row: int, column: int, sticky: str = ""):
-        self.frame.grid(row=row,column=column, sticky=sticky)
+    
+    def update(self):
+        if self.selectedBody.get() == "Select Planet/Moon":
+            return
+        nameOfSelectedBody = game.bodyDisplayedNameToNameConverter(self.selectedBody.get())
+        crewNumbersFound = [colony.crew for colony in game.saveData.colonies if colony.body == nameOfSelectedBody]
+        if len(crewNumbersFound) > 1:
+            raise RuntimeError(f"There are {len(crewNumbersFound)} colonies that are on the body {nameOfSelectedBody}. There should be 1")
+        elif len(crewNumbersFound) == 1:
+            self.colonyCrewCounter.set(f"Crew: {crewNumbersFound[0]}")
+        else:
+            self.colonyCrewCounter.set(f"{nameOfSelectedBody} has no colony.")
 
 class LabeledDropdown:
     def __init__(self, frame: tkinter.Misc, row: int, column: int, label: str, defaultValue: str, *options: str):
@@ -142,15 +152,7 @@ screen.protocol("WM_DELETE_WINDOW", close)
 while running:
     time.sleep(1/30)
     game.update()
-    if colonyResourceDashboard.selectedBody.get() != "Select Planet/Moon":
-        nameOfSelectedBody = game.bodyDisplayedNameToNameConverter(colonyResourceDashboard.selectedBody.get())
-        crewNumbersFound = [colony.crew for colony in game.saveData.colonies if colony.body == nameOfSelectedBody]
-        if len(crewNumbersFound) > 1:
-            raise RuntimeError(f"There are {len(crewNumbersFound)} colonies that are on the body {nameOfSelectedBody}. There should be 1")
-        elif len(crewNumbersFound) == 1:
-            colonyResourceDashboard.colonyCrewCounter.set(f"Crew: {crewNumbersFound[0]}")
-        else:
-            colonyResourceDashboard.colonyCrewCounter.set(f"{nameOfSelectedBody} has no colony.")
+    colonyResourceDashboard.update()
     if game.saveData.tutorialProgress == -1:
         tutorial.destroy()
     else:
