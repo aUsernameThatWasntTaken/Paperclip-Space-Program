@@ -116,7 +116,7 @@ class ResearchMenu:
         self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
 
         self.label = tkinter.Label(self.frame, text="Research Menu", font=largeLabelFont)
-        self.label.grid(row=0,column=0)
+        self.label.grid(row=0,column=0, columnspan=2)
 
         self.researcherCounter = tkinter.StringVar(value="Resaecher count goes heer.")
         self.researcherCounterLabel = tkinter.Label(self.frame, textvariable=self.researcherCounter)
@@ -153,6 +153,8 @@ while running:
     time.sleep(1/30)
     game.update()
     colonyResourceDashboard.update()
+    researchMenu.researcherCounter.set("Researchers: "+str(game.researcherCount))
+    researchMenu.researchSpeedVar.set("Research Speed: "+str(game.researchSpeed)+" points per second")
     if game.saveData.tutorialProgress == -1:
         tutorial.destroy()
     else:

@@ -12,6 +12,9 @@ defaultSaveData = {
     }
 
 paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
+researcherCount = 10
+researcherEfficiency = 10 #research points per researcher Second
+researchSpeed = researcherCount*researcherEfficiency
 
 class TechTreeNode:
     def __init__(self,name: str, displayedName: str, prerequisites: list[str], unlocks: list[str], desc: str):
