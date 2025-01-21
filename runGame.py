@@ -49,7 +49,7 @@ class ColonyManagement:
     def grid(self, row: int, column: int, rowSpan = 1, columnSpan = 1, sticky: str = ""):
         self.frame.grid(row=row, column=column, rowspan=rowSpan, columnspan=columnSpan, sticky=sticky)
 
-class ColonyResourceDashboard:
+class LogisticsDashboard:
     def __init__(self, targetScreen):
         self.frame = tkinter.Frame(targetScreen, highlightbackground="black", highlightthickness=2)
         self.grid = self.frame.grid
@@ -132,8 +132,8 @@ class ResearchMenu:
 colonyManagement = ColonyManagement(screen)  #A 2 by 2 grid.
 colonyManagement.grid(row=1, column=0, sticky="news", rowSpan=2)
 
-colonyResourceDashboard = ColonyResourceDashboard(screen)
-colonyResourceDashboard.grid(row=1,column=1, sticky = "news")
+logisticsDashboard = LogisticsDashboard(screen)
+logisticsDashboard.grid(row=1,column=1, sticky = "news")
 
 drawingBoard = DrawingBoard(screen)
 drawingBoard.grid(row = 2, column = 1, sticky="news")
@@ -152,7 +152,7 @@ screen.protocol("WM_DELETE_WINDOW", close)
 while running:
     time.sleep(1/30)
     game.update()
-    colonyResourceDashboard.update()
+    logisticsDashboard.update()
     researchMenu.researcherCounter.set("Researchers: "+str(game.researcherCount))
     researchMenu.researchSpeedVar.set("Research Speed: "+str(game.researchSpeed)+" points per second")
     if game.saveData.tutorialProgress == -1:
