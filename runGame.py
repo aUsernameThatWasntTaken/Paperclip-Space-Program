@@ -10,6 +10,9 @@ screen.title("PaperClip Space Program")
 screen.columnconfigure(0, weight=2)
 screen.columnconfigure(1, weight=1)
 screen.columnconfigure(2, weight=0)
+
+screen.rowconfigure(1, weight=1)
+screen.rowconfigure(2, weight=1)
 #Defines a frame for the tutorial text, next, and skip tutorial buttons.
 if game.saveData.tutorialProgress != -1:
     tutorial = tkinter.Frame(screen)
@@ -79,13 +82,19 @@ class DrawingBoard:
         self.shipNameLabel.grid(row=1, column=0)
         self.shipName = tkinter.StringVar(value="Untitled Spacecraft")
         self.shipNameTextbox = tkinter.Entry(self.frame, textvariable=self.shipName)
-        self.shipNameTextbox.grid(row=1,column=1)
+        self.shipNameTextbox.grid(row=1,column=1, sticky="news")
 
         self.contolUnitLabel = tkinter.Label(self.frame, text="Ship's contol Unit: ")
         self.contolUnitLabel.grid(row=2, column=0)
         self.shipControlUnit = tkinter.StringVar(value="Select a Contol Unit")
         self.contolUnitDropdown = tkinter.OptionMenu(self.frame, self.shipControlUnit, *[part.name for part in game.Parts.controlUnits])
-        self.contolUnitDropdown.grid(row=2, column=1)
+        self.contolUnitDropdown.grid(row=2, column=1, sticky="news")
+
+        self.thrustersLabel = tkinter.Label(self.frame, text="Ship's Thrusters: ")
+        self.thrustersLabel.grid(row=3, column=0)
+        self.shipThrusterType = tkinter.StringVar(value="Select a type of Thruster")
+        self.thrusterDropdown = tkinter.OptionMenu(self.frame, self.shipThrusterType, *[part.name for part in game.Parts.thrusters])
+        self.thrusterDropdown.grid(row=3, column=1, sticky="news")
 
 class ResearchMenu:
     def __init__(self, targetFrame):
@@ -109,10 +118,10 @@ colonyManagement = ColonyManagement(screen)  #A 2 by 2 grid.
 colonyManagement.grid(row=1, column=0, sticky="news", rowSpan=2)
 
 colonyResourceDashboard = ColonyResourceDashboard(screen)
-colonyResourceDashboard.grid(row=1,column=1, sticky = "new")
+colonyResourceDashboard.grid(row=1,column=1, sticky = "news")
 
 drawingBoard = DrawingBoard(screen)
-drawingBoard.grid(row = 2, column = 1, sticky="EW")
+drawingBoard.grid(row = 2, column = 1, sticky="news")
 
 researchMenu = ResearchMenu(screen)
 researchMenu.grid(row=1, column=2, rowSpan=2, sticky="news")

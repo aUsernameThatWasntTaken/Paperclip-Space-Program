@@ -50,10 +50,20 @@ class Colony:
         self.crew: int = jsonDict.get("crew", 0)
 
 class Parts:
-    class ControlUnit:
+    class Part:
         def __init__(self, name: str):
             self.name = name
+
+    class ControlUnit(Part):
+        def __init__(self, name):
+            super().__init__(name)
+
+    class Thruster(Part):
+        def __init__(self, name):
+            super().__init__(name)
+
     controlUnits: list[ControlUnit] = [ControlUnit(name="Mercury Command Pod")]
+    thrusters: list[Thruster] = [Thruster(name = "RocketDyne A7")]
 
 def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
     matchingBodies = [body.name for body in celestialBodies if body.displayedName == bodyDisplayedName]
