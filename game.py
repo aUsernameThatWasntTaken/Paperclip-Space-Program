@@ -61,9 +61,14 @@ class Parts:
     class Thruster(Part):
         def __init__(self, name):
             super().__init__(name)
+    
+    class FuelTank(Part):
+        def __init__(self, name):
+            super().__init__(name)
 
     controlUnits: list[ControlUnit] = [ControlUnit(name="Mercury Command Pod")]
     thrusters: list[Thruster] = [Thruster(name = "RocketDyne A7")]
+    fuelTanks: list[FuelTank] = [FuelTank(name = "Cylindrical")]
 
 def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
     matchingBodies = [body.name for body in celestialBodies if body.displayedName == bodyDisplayedName]

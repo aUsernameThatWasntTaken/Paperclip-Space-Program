@@ -99,6 +99,7 @@ class DrawingBoard:
         self.shipName = LabeledEntry(self.frame, 1,0, "Ship Name: ", "Untitled Spacecraft")
         self.controlUnit = LabeledDropdown(self.frame, 2, 0, "Ship's contol Unit: ", "Select a Contol Unit", *[part.name for part in game.Parts.controlUnits])
         self.thrusters = LabeledDropdown(self.frame, 3, 0, "Ship's Thrusters: ", "Select a type of Thruster", *[part.name for part in game.Parts.thrusters])
+        self.fuelTank = LabeledDropdown(self.frame, 4,0, "Fuel Tank: ", "Select Fuel Tank", *[part.name for part in game.Parts.fuelTanks])
 
 class ResearchMenu:
     def __init__(self, targetFrame):
