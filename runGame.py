@@ -70,6 +70,24 @@ class ColonyResourceDashboard:
     def grid(self, row: int, column: int, sticky: str = ""):
         self.frame.grid(row=row,column=column, sticky=sticky)
 
+class LabeledDropdown:
+    def __init__(self, frame: tkinter.Misc, row: int, column: int, label: str, defaultValue: str, *options: str):
+        self.label = tkinter.Label(frame, text=label)
+        self.label.grid(row=row, column=column)
+        self.stringVar = tkinter.StringVar(value=defaultValue)
+        self.get = self.stringVar.get
+        self.Dropdown = tkinter.OptionMenu(frame, self.stringVar, *options)
+        self.Dropdown.grid(row=row, column=column+1, sticky="news")
+
+class LabeledEntry:
+    def __init__(self, frame: tkinter.Misc, row: int, column: int, label: str, defaultValue: str):
+        self.label = tkinter.Label(frame, text=label)
+        self.label.grid(row=row, column=column)
+        self.stringVar = tkinter.StringVar(value=defaultValue)
+        self.get = self.stringVar.get
+        self.entry = tkinter.Entry(frame, textvariable=self.stringVar)
+        self.entry.grid(row=row, column=column+1, sticky="news")
+
 class DrawingBoard:
     def __init__(self, targetFrame: tkinter.Misc):
         self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
@@ -78,23 +96,9 @@ class DrawingBoard:
         self.label = tkinter.Label(self.frame, text="Drawing Board", font=largeLabelFont)
         self.label.grid(row=0, column=0, columnspan=2)
 
-        self.shipNameLabel = tkinter.Label(self.frame, text="Ship Name: ")
-        self.shipNameLabel.grid(row=1, column=0)
-        self.shipName = tkinter.StringVar(value="Untitled Spacecraft")
-        self.shipNameTextbox = tkinter.Entry(self.frame, textvariable=self.shipName)
-        self.shipNameTextbox.grid(row=1,column=1, sticky="news")
-
-        self.contolUnitLabel = tkinter.Label(self.frame, text="Ship's contol Unit: ")
-        self.contolUnitLabel.grid(row=2, column=0)
-        self.shipControlUnit = tkinter.StringVar(value="Select a Contol Unit")
-        self.contolUnitDropdown = tkinter.OptionMenu(self.frame, self.shipControlUnit, *[part.name for part in game.Parts.controlUnits])
-        self.contolUnitDropdown.grid(row=2, column=1, sticky="news")
-
-        self.thrustersLabel = tkinter.Label(self.frame, text="Ship's Thrusters: ")
-        self.thrustersLabel.grid(row=3, column=0)
-        self.shipThrusterType = tkinter.StringVar(value="Select a type of Thruster")
-        self.thrusterDropdown = tkinter.OptionMenu(self.frame, self.shipThrusterType, *[part.name for part in game.Parts.thrusters])
-        self.thrusterDropdown.grid(row=3, column=1, sticky="news")
+        self.shipName = LabeledEntry(self.frame, 1,0, "Ship Name: ", "Untitled Spacecraft")
+        self.controlUnit = LabeledDropdown(self.frame, 2, 0, "Ship's contol Unit: ", "Select a Contol Unit", *[part.name for part in game.Parts.controlUnits])
+        self.thrusters = LabeledDropdown(self.frame, 3, 0, "Ship's Thrusters: ", "Select a type of Thruster", *[part.name for part in game.Parts.thrusters])
 
 class ResearchMenu:
     def __init__(self, targetFrame):
