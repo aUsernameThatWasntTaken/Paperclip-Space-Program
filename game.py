@@ -1,6 +1,7 @@
 """Contains all of the \"wonderful\" game logic. Any Userinterfaceing is right next door in runGame.py."""
 
 import json
+from typing import Callable, Iterable
 
 #TODO: Add body class
 
@@ -72,6 +73,22 @@ class Parts:
     controlUnits: list[ControlUnit] = [ControlUnit(name="Mercury Command Pod")]
     thrusters: list[Thruster] = [Thruster(name = "RocketDyne A7")]
     fuelTanks: list[FuelTank] = [FuelTank(name = "Cylindrical")]
+
+class Spacecraft:
+    def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: str):
+        self.name = name
+        self.type = type
+        thruster, self.numThrusters = thrusters
+        self.controlUnit = findPart(controlUnit, Parts.controlUnits, lambda part: part.name)
+        self.thrusters = findPart(thruster, Parts.thrusters, lambda part: part.name)
+        self.fuelTank = findPart(fuelTank, Parts.fuelTanks, lambda part: part.name)
+
+def findPart(name: str, partType: Iterable[Parts.Part], partAttribute: Callable[[Parts.Part], str]):
+    """Finds a part by name, using partAttribute to decide whether to find the name or the display name, once those are added."""
+    matchingParts = [part for part in partType if partAttribute(part) == name]
+    if len(matchingParts) != 1:
+        raise RuntimeError(f"There are {len(matchingParts)} parts in the provided list that match the name {name}. There should be one.")
+    return matchingParts[0]
 
 def bodyDisplayedNameToNameConverter(bodyDisplayedName: str):
     matchingBodies = [body.name for body in celestialBodies if body.displayedName == bodyDisplayedName]
