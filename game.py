@@ -113,3 +113,7 @@ celestialBodies: list[CelestialBody] = [
 tutorialText = [f"""Welcome to PaperClip Space Program! {paperClipCompanyName} (the first company to employ a Superintelligent AGI as 
                 its CEO) has recently decided to help fund our space program!""",
                 "This works fine."]
+
+def update():
+    global researchSpeed
+    researchSpeed = researcherCount*researcherEfficiency
