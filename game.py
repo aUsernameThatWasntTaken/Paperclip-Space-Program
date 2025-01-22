@@ -70,12 +70,20 @@ class Colony:
         self.crew: int = jsonDict.get("crew", 0)
 
 class Parts:
+    class Part:
+        def __init__(self, name:str, dryMass:int, wetMass:int):
+            self.name = name
+            self.dryMass = dryMass
+            self.wetMass = wetMass
+
     class PartType:
         """The base class for parts. Mass is measured in Kg."""
         def __init__(self, name: str, MassFunc: Callable[[int,int],int]):
             self.name = name
             self.dryMassFunc = MassFunc
             self.wetMassFunc = MassFunc
+        def __call__(self, radius = 0, height = 0):
+            return Parts.Part(self.name, self.dryMassFunc(radius, height), self.wetMassFunc(radius, height))
 
     class ControlUnit(PartType):
         def __init__(self, name: str, massFunc: Callable[[int,int],int]):
@@ -83,9 +91,10 @@ class Parts:
 
     class Thruster(PartType):
         """Mass in kg, thrust in N"""
-        def __init__(self, name: str, massFunc: Callable[[int,int],int], thrust: int):
-            super().__init__(name, massFunc)
+        def __init__(self, name: str, mass: int, thrust: int, specificImpulse: int):
+            super().__init__(name, lambda _,__: mass)
             self.thrust = thrust
+            self.specificImpulse = specificImpulse
     
     class FuelTank(PartType):
         def __init__(self, name: str, dryMassFunc: Callable[[int,int],int], wetMassFunc: Callable[[int,int],int]):
@@ -93,18 +102,22 @@ class Parts:
             self.wetMassFunc = wetMassFunc
 
     controlUnits: list[ControlUnit] = [ControlUnit("Mercury Command Pod", massFunc=lambda _,__: 1118)]
-    thrusters: list[Thruster] = [Thruster("RocketDyne A7", massFunc=lambda _,__: 658, thrust=346_961)]
+    thrusters: list[Thruster] = [Thruster("RocketDyne A7", mass=658, thrust=346_961, specificImpulse=235)]
     fuelTanks: list[FuelTank] = [FuelTank("Cylindrical", dryMassFunc=(lambda r, h: int(densityOfSteel*fuelTankWallThickness*surfaceAreaOfCylinder(r,h))),
                                                          wetMassFunc=(lambda r,h: int(densityOfSteel*fuelTankWallThickness*surfaceAreaOfCylinder(r,h)+densityOfMethalox*volumeOfCylinder(r,h))))]
 
 class SpacecraftDesign:
-    def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: str):
+    def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: tuple[str, tuple[int]]):
         self.name = name
         self.type = type
         thruster, self.numThrusters = thrusters
-        self.controlUnit = findPart(controlUnit, Parts.controlUnits, lambda part: part.name)
-        self.thrusters = findPart(thruster, Parts.thrusters, lambda part: part.name)
-        self.fuelTank = findPart(fuelTank, Parts.fuelTanks, lambda part: part.name)
+        thrusterType: Parts.Thruster = findPart(thruster, Parts.thrusters, lambda part: part.name)
+        self.thrust = thrusterType.thrust
+        self.specificImpulse = thrusterType.specificImpulse
+        fuelTankName, self.fuelTankDimentions = fuelTank
+        self.controlUnit = findPart(controlUnit, Parts.controlUnits, lambda part: part.name)()
+        self.thrusters = thrusterType()
+        self.fuelTank = findPart(fuelTankName, Parts.fuelTanks, lambda part: part.name)()
 
 class Satelite:
     def __init__(self, mass):

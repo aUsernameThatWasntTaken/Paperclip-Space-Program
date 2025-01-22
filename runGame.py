@@ -114,7 +114,7 @@ class DrawingBoard:
         self.saveShipButton.grid(row=5, column=0)
     
     def saveShip(self):
-        game.saveData.spacecraftDesigns.append(game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), self.fuelTank.get()))
+        game.saveData.spacecraftDesigns.append(game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), (self.fuelTank.get(), (10,10))))
 
 class ResearchMenu:
     def __init__(self, targetFrame):
