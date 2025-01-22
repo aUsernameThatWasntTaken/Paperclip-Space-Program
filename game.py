@@ -22,6 +22,7 @@ milimetre = 1/1000
 paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
 fuelTankWallThickness = 10*milimetre
 densityOfSteel = 7850 #kg/m³
+earthFirstStageDV = 1000 #change this later
 
 #FORMULAS:
 surfaceAreaOfCylinder: Callable[[int,int],float] = lambda r, h: 2*pi*(r**2) + 2*pi*r*h
@@ -105,6 +106,13 @@ class SpacecraftDesign:
         self.thrusters = findPart(thruster, Parts.thrusters, lambda part: part.name)
         self.fuelTank = findPart(fuelTank, Parts.fuelTanks, lambda part: part.name)
 
+class Satelite:
+    def __init__(self, mass):
+        self.mass = mass
+
+class Satelites:
+    tutorial = Satelite(250)
+
 def findPart(name: str, partType: Iterable[Parts.PartType], partAttribute: Callable[[Parts.PartType], str]):
     """Finds a part by name, using partAttribute to decide whether to find the name or the display name, once those are added."""
     matchingParts = [part for part in partType if partAttribute(part) == name]
@@ -154,7 +162,9 @@ celestialBodies: list[CelestialBody] = [
 
 tutorialText = [f"""Welcome to PaperClip Space Program! {paperClipCompanyName} (the first company to employ a Superintelligent AGI as 
                 its CEO) has recently decided to help fund our space program!""",
-                "This works fine."]
+                f"First, we must design and launch a rocket. In the drawing board, make an Earth second Stage rocket which can carry {Satelites.tutorial.mass}kg to orbit.",
+                "Next, design a first stage rocket capable of lifting the first stage to a suborbital trajectory.",
+                "Now that we have all that we need, we can launch out first rocket! On the Earth Rocket Assembly Panel, select the Tutorial satelite and your 2 rocket stages, and press LAUNCH."]
 
 def update():
     global researchSpeed
