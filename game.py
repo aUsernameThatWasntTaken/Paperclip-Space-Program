@@ -2,6 +2,7 @@
 
 import json
 from typing import Callable, Iterable
+from math import pi
 
 #TODO: Add body class
 
@@ -12,7 +13,20 @@ defaultSaveData = {
     "unlockedNodes":[]
     }
 
+#CONSTANTS:
+densityOfLox = 1141
+densityOfLiquidMethane = 422
+MethaneLoxRatio = 1/3.6 #according to reddit.
+densityOfMethalox = int((densityOfLox*1+densityOfLiquidMethane*MethaneLoxRatio)/(1+MethaneLoxRatio))
+milimetre = 1/1000
 paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
+fuelTankWallThickness = 10*milimetre
+densityOfSteel = 7850 #kg/m³
+
+#FORMULAS:
+surfaceAreaOfCylinder: Callable[[int,int],float] = lambda r, h: 2*pi*(r**2) + 2*pi*r*h
+volumeOfCylinder: Callable[[int,int],float] = lambda r,h: pi*h*(r**2)
+
 researcherCount = 10
 researcherEfficiency = 10 #research points per researcher Second
 researchSpeed = researcherCount*researcherEfficiency
@@ -55,25 +69,32 @@ class Colony:
         self.crew: int = jsonDict.get("crew", 0)
 
 class Parts:
-    class Part:
-        def __init__(self, name: str):
+    class PartType:
+        """The base class for parts. Mass is measured in Kg."""
+        def __init__(self, name: str, MassFunc: Callable[[int,int],int]):
             self.name = name
+            self.dryMassFunc = MassFunc
+            self.wetMassFunc = MassFunc
 
-    class ControlUnit(Part):
-        def __init__(self, name):
-            super().__init__(name)
+    class ControlUnit(PartType):
+        def __init__(self, name: str, massFunc: Callable[[int,int],int]):
+            super().__init__(name, massFunc)
 
-    class Thruster(Part):
-        def __init__(self, name):
-            super().__init__(name)
+    class Thruster(PartType):
+        """Mass in kg, thrust in N"""
+        def __init__(self, name: str, massFunc: Callable[[int,int],int], thrust: int):
+            super().__init__(name, massFunc)
+            self.thrust = thrust
     
-    class FuelTank(Part):
-        def __init__(self, name):
-            super().__init__(name)
+    class FuelTank(PartType):
+        def __init__(self, name: str, dryMassFunc: Callable[[int,int],int], wetMassFunc: Callable[[int,int],int]):
+            super().__init__(name, dryMassFunc)
+            self.wetMassFunc = wetMassFunc
 
-    controlUnits: list[ControlUnit] = [ControlUnit(name="Mercury Command Pod")]
-    thrusters: list[Thruster] = [Thruster(name = "RocketDyne A7")]
-    fuelTanks: list[FuelTank] = [FuelTank(name = "Cylindrical")]
+    controlUnits: list[ControlUnit] = [ControlUnit("Mercury Command Pod", massFunc=lambda _,__: 1118)]
+    thrusters: list[Thruster] = [Thruster("RocketDyne A7", massFunc=lambda _,__: 658, thrust=346_961)]
+    fuelTanks: list[FuelTank] = [FuelTank("Cylindrical", dryMassFunc=(lambda r, h: int(densityOfSteel*fuelTankWallThickness*surfaceAreaOfCylinder(r,h))),
+                                                         wetMassFunc=(lambda r,h: int(densityOfSteel*fuelTankWallThickness*surfaceAreaOfCylinder(r,h)+densityOfMethalox*volumeOfCylinder(r,h))))]
 
 class SpacecraftDesign:
     def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: str):
@@ -84,7 +105,7 @@ class SpacecraftDesign:
         self.thrusters = findPart(thruster, Parts.thrusters, lambda part: part.name)
         self.fuelTank = findPart(fuelTank, Parts.fuelTanks, lambda part: part.name)
 
-def findPart(name: str, partType: Iterable[Parts.Part], partAttribute: Callable[[Parts.Part], str]):
+def findPart(name: str, partType: Iterable[Parts.PartType], partAttribute: Callable[[Parts.PartType], str]):
     """Finds a part by name, using partAttribute to decide whether to find the name or the display name, once those are added."""
     matchingParts = [part for part in partType if partAttribute(part) == name]
     if len(matchingParts) != 1:
