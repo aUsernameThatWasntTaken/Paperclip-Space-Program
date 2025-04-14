@@ -3,6 +3,8 @@ import tkinter
 import time
 
 largeLabelFont = ("Segoe UI", 18)
+# default Font = ("Segoe UI", 9)    but there's no need to think about that.
+smallLabelFont = ("Segoe UI", 4)
 
 screen = tkinter.Tk()
 screen.title("PaperClip Space Program")
@@ -117,19 +119,40 @@ class DrawingBoard:
         game.saveData.spacecraftDesigns.append(game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), (self.fuelTank.get(), (10,10))))
 
 class ResearchMenu:
-    def __init__(self, targetFrame):
+    class ResearchNodeText:
+        def __init__(self, techtreeNode: game.TechTreeNode, targetFrame):
+            self.node = techtreeNode
+            self.frame = tkinter.Frame(targetFrame)
+            self.grid = self.frame.grid
+
+            self.nameLabel = tkinter.Label(self.frame, text=techtreeNode.displayedName)
+            self.nameLabel.grid(row=0,column=0)
+            self.descLabel = tkinter.Label(self.frame, text=techtreeNode.desc, font=smallLabelFont)
+            self.descLabel.grid(row=1,column=0)
+
+    def __init__(self, targetFrame, researchNodes: list[game.TechTreeNode]):
+        nextRow = iter(range(100)).__next__ # Raise number if needed (probebly not)
+
         self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
 
         self.label = tkinter.Label(self.frame, text="Research Menu", font=largeLabelFont)
-        self.label.grid(row=0,column=0, columnspan=2)
+        self.label.grid(row=nextRow(),column=0, columnspan=2)
 
         self.researcherCounter = tkinter.StringVar(value="Resaecher count goes heer.")
         self.researcherCounterLabel = tkinter.Label(self.frame, textvariable=self.researcherCounter)
-        self.researcherCounterLabel.grid(row=1, column=0)
+        researcherCounterRow = nextRow()
+        self.researcherCounterLabel.grid(row=researcherCounterRow, column=0)
 
         self.researchSpeedVar = tkinter.StringVar(value="Reaeaearch spead gooes hear.")
         self.researchSpeedLabel = tkinter.Label(self.frame, textvariable=self.researchSpeedVar)
-        self.researchSpeedLabel.grid(row=1,column=1)
+        self.researchSpeedLabel.grid(row=researcherCounterRow,column=1)
+
+        researchNodeTexts = [self.ResearchNodeText(node, self.frame) for node in researchNodes]
+        for researchNodeText in researchNodeTexts:
+            row = nextRow()
+            researchNodeText.grid(row=row,column=0)
+            addToQueueButton = tkinter.Button(self.frame,command=researchNodeText.node.addToQueue, text="add to queue")
+            addToQueueButton.grid(row=row,column=1)
 
     def grid(self, row: int, column: int, rowSpan = 1, columnSpan = 1, sticky: str = ""):
         self.frame.grid(row=row, column=column, rowspan=rowSpan, columnspan=columnSpan, sticky=sticky)
@@ -143,7 +166,7 @@ logisticsDashboard.grid(row=1,column=1, sticky = "news")
 drawingBoard = DrawingBoard(screen)
 drawingBoard.grid(row = 2, column = 1, sticky="news")
 
-researchMenu = ResearchMenu(screen)
+researchMenu = ResearchMenu(screen, game.TechTreeNodes)
 researchMenu.grid(row=1, column=2, rowSpan=2, sticky="news")
 
 running = True

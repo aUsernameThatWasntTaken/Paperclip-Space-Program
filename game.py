@@ -47,6 +47,9 @@ class TechTreeNode:
             if prerequisite not in saveData.unlockedNodes:
                 returnBool = False
         return returnBool
+    
+    def addToQueue(self):
+        pass #TODO: do something here
 
 class SaveData:
     """Takes the dictionary from json.load and objectifies it."""
