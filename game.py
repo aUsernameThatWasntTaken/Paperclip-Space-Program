@@ -2,7 +2,7 @@
 
 import json
 from typing import Callable, Iterable
-from math import pi
+from math import pi, log
 
 #TODO: Add body class
 
@@ -23,6 +23,7 @@ paperClipCompanyName = "Paperclips LLC LTD GmbH Inc. Sp.z.o.o. SRL Co."
 fuelTankWallThickness = 10*milimetre
 densityOfSteel = 7850 #kg/m³
 earthFirstStageDV = 1000 #change this later
+earthSurfaceGravity = 9.80665 #m/s²
 
 #FORMULAS:
 surfaceAreaOfCylinder: Callable[[int,int],float] = lambda r, h: 2*pi*(r**2) + 2*pi*r*h
@@ -112,12 +113,15 @@ class SpacecraftDesign:
         self.type = type
         thruster, self.numThrusters = thrusters
         thrusterType: Parts.Thruster = findPart(thruster, Parts.thrusters, lambda part: part.name)
-        self.thrust = thrusterType.thrust
+        self.thrust = thrusterType.thrust*self.numThrusters
         self.specificImpulse = thrusterType.specificImpulse
         fuelTankName, self.fuelTankDimentions = fuelTank
         self.controlUnit = findPart(controlUnit, Parts.controlUnits, lambda part: part.name)()
         self.thrusters = thrusterType()
         self.fuelTank = findPart(fuelTankName, Parts.fuelTanks, lambda part: part.name)()
+        self.wetMass = sum([part.wetMass for part in [self.controlUnit,self.fuelTank,*[self.thrusters for _ in range(self.numThrusters)]]])
+        self.dryMass = sum([part.dryMass for part in [self.controlUnit,self.fuelTank,*[self.thrusters for _ in range(self.numThrusters)]]])
+        self.deltaV = self.specificImpulse*earthSurfaceGravity*log(self.wetMass/self.dryMass) #Should work I think.
 
 class Satelite:
     def __init__(self, mass):
