@@ -118,7 +118,7 @@ class Parts:
                                                          wetMassFunc=(lambda r,h: int(densityOfSteel*fuelTankWallThickness*surfaceAreaOfCylinder(r,h)+densityOfMethalox*volumeOfCylinder(r,h))))]
 
 class SpacecraftDesign:
-    def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: tuple[str, tuple[int]]):
+    def __init__(self, name: str, type: str, controlUnit: str, thrusters: tuple[str, int], fuelTank: tuple[str, tuple[int,int]]):
         self.name = name
         self.type = type
         thruster, self.numThrusters = thrusters
@@ -130,10 +130,18 @@ class SpacecraftDesign:
             raise ValueError(f"{self.fuelTankDimentions} is an invalid fuel tank size.")
         self.controlUnit = findPart(controlUnit, Parts.controlUnits, lambda part: part.name)()
         self.thrusters = thrusterType()
-        self.fuelTank = findPart(fuelTankName, Parts.fuelTanks, lambda part: part.name)()
+        self.fuelTank = findPart(fuelTankName, Parts.fuelTanks, lambda part: part.name)(*self.fuelTankDimentions)
         self.wetMass = sum([part.wetMass for part in [self.controlUnit,self.fuelTank,*[self.thrusters for _ in range(self.numThrusters)]]])
         self.dryMass = sum([part.dryMass for part in [self.controlUnit,self.fuelTank,*[self.thrusters for _ in range(self.numThrusters)]]])
         self.deltaV = self.specificImpulse*earthSurfaceGravity*log(self.wetMass/self.dryMass) #Should work I think.
+
+        self.statDict = {
+            "thrust (kN)":int(self.thrust/1000),
+            "ISP (s)":self.specificImpulse,
+            "wet mass (tons)":int(self.wetMass/1000),
+            "dry mass (tons)":int(self.dryMass/1000),
+            "dV (m/s)":self.deltaV
+        }
 
 class Satelite:
     def __init__(self, mass):

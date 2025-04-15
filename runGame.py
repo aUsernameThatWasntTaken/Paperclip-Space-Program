@@ -103,7 +103,22 @@ class LabeledEntry:
         self.entry.grid(row=row, column=column+1, sticky="news")
 
 class DrawingBoard:
-    def __init__(self, targetFrame: tkinter.Misc):
+
+    class ShipStatDisplay:
+        def __init__(self, targetFrame: FrameClass):
+            self.frame = tkinter.Frame(targetFrame)
+            self.grid = self.frame.grid
+
+        def update(self, design: game.SpacecraftDesign):
+            nextRow = iter(range(100)).__next__
+            for stat, value in design.statDict.items():
+                row = nextRow()
+                statLabel = tkinter.Label(self.frame, text=stat)
+                statLabel.grid(row=row, column=0)
+                valueLabel = tkinter.Label(self.frame, text=str(value))
+                valueLabel.grid(row=row, column=1)
+
+    def __init__(self, targetFrame: FrameClass):
         self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
         self.grid = self.frame.grid
 
@@ -114,11 +129,21 @@ class DrawingBoard:
         self.controlUnit = LabeledDropdown(self.frame, 2, 0, "Ship's contol Unit: ", "Select a Contol Unit", *[part.name for part in game.Parts.controlUnits])
         self.thrusters = LabeledDropdown(self.frame, 3, 0, "Ship's Thrusters: ", "Select a type of Thruster", *[part.name for part in game.Parts.thrusters])
         self.fuelTank = LabeledDropdown(self.frame, 4,0, "Fuel Tank: ", "Select Fuel Tank", *[part.name for part in game.Parts.fuelTanks])
+        self.evalShipButton = tkinter.Button(self.frame, command=self.evaluateShip, text="Evaluate Ship")
+        self.evalShipButton.grid(row=5, column=0)
         self.saveShipButton = tkinter.Button(self.frame, command=self.saveShip, text="Save Ship")
-        self.saveShipButton.grid(row=5, column=0)
+        self.saveShipButton.grid(row=5, column=1)
+        self.shipStatDisplay = self.ShipStatDisplay(self.frame)
+        self.shipStatDisplay.grid(row=6,column=0, columnspan=2)
     
+    def getShipDesign(self):
+        return game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), (self.fuelTank.get(), (10,10)))
+
+    def evaluateShip(self):
+        self.shipStatDisplay.update(self.getShipDesign())
+
     def saveShip(self):
-        game.saveData.spacecraftDesigns.append(game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), (self.fuelTank.get(), (10,10))))
+        game.saveData.spacecraftDesigns.append(self.getShipDesign())
 
 class ResearchMenu:
     class ResearchNodeText:
