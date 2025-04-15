@@ -29,6 +29,12 @@ earthSurfaceGravity = 9.80665 #m/s²
 surfaceAreaOfCylinder: Callable[[int,int],float] = lambda r, h: 2*pi*(r**2) + 2*pi*r*h
 volumeOfCylinder: Callable[[int,int],float] = lambda r,h: pi*h*(r**2)
 
+#TESTS for formulas:
+if surfaceAreaOfCylinder(1,2) != 6*pi:
+    raise ArithmeticError(f"{surfaceAreaOfCylinder(1,2)=}, should be {6*pi}")
+if volumeOfCylinder(1,2) != 2*pi:
+    raise ArithmeticError(f"{volumeOfCylinder(1,2)=}, should be {2*pi}")
+
 researcherCount = 10
 researcherEfficiency = 10 #research points per researcher Second
 researchSpeed = researcherCount*researcherEfficiency
