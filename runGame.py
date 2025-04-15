@@ -2,6 +2,8 @@ import game
 import tkinter
 import time
 
+FrameClass = tkinter.Misc
+
 largeLabelFont = ("Segoe UI", 18)
 # default Font = ("Segoe UI", 9)    but there's no need to think about that.
 smallLabelFont = ("Segoe UI", 4)

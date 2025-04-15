@@ -82,6 +82,7 @@ class Colony:
 class Parts:
     class Part:
         def __init__(self, name:str, dryMass:int, wetMass:int):
+            print(f"Created part: {name} with dry mass {dryMass}kg and wet mass {wetMass}kg")
             self.name = name
             self.dryMass = dryMass
             self.wetMass = wetMass
@@ -125,6 +126,8 @@ class SpacecraftDesign:
         self.thrust = thrusterType.thrust*self.numThrusters
         self.specificImpulse = thrusterType.specificImpulse
         fuelTankName, self.fuelTankDimentions = fuelTank
+        if self.fuelTankDimentions[0] == 0 or self.fuelTankDimentions[1] == 0:
+            raise ValueError(f"{self.fuelTankDimentions} is an invalid fuel tank size.")
         self.controlUnit = findPart(controlUnit, Parts.controlUnits, lambda part: part.name)()
         self.thrusters = thrusterType()
         self.fuelTank = findPart(fuelTankName, Parts.fuelTanks, lambda part: part.name)()
