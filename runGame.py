@@ -2,11 +2,13 @@ import game
 import tkinter
 import time
 
-FrameClass = tkinter.Misc
+# Import each GUI element to make this file smaller
+from DrawingBoard import DrawingBoard
+from colonyManagementDashboard import ColonyManagement
+from LogisticsDashboard import LogisticsDashboard
+from ResearchMenu import ResearchMenu
 
-largeLabelFont = ("Segoe UI", 18)
-# default Font = ("Segoe UI", 9)    but there's no need to think about that.
-smallLabelFont = ("Segoe UI", 4)
+FrameClass = tkinter.Misc
 
 screen = tkinter.Tk()
 screen.title("PaperClip Space Program")
@@ -32,157 +34,6 @@ if game.saveData.tutorialProgress != -1:
 moneyStrVar = tkinter.StringVar(value=("Available funds: "+str(game.saveData.money)))
 moneyTeller = tkinter.Label(screen, textvariable=moneyStrVar)
 moneyTeller.grid(row=0,column=0)
-
-class ColonyManagement:
-    def __init__(self, targetScreen: tkinter.Misc):
-        self.frame = tkinter.Frame(targetScreen, highlightbackground="black", highlightthickness=2)   # A 2 by 2 grid.
-
-        self.label = tkinter.Label(self.frame, text="Colony Management", font=largeLabelFont)
-        self.label.grid(row=0,column=0)
-
-        self.productionMenu = tkinter.Label(self.frame, text="Colony Production")  #change this later
-        self.productionMenu.grid(row=1,column=0)
-
-        self.selectedPlanet = tkinter.StringVar(value="Select Planet/Moon")
-        self.planetSelection = tkinter.OptionMenu(self.frame, self.selectedPlanet, *[body.displayedName for body in game.celestialBodies])
-        self.planetSelection.grid(row=0,column=1)
-
-        self.buildMenu = tkinter.Label(self.frame, text="Colony build menu") #Change this later too.
-        self.buildMenu.grid(row=1, column=1)
-    
-    def grid(self, row: int, column: int, rowSpan = 1, columnSpan = 1, sticky: str = ""):
-        self.frame.grid(row=row, column=column, rowspan=rowSpan, columnspan=columnSpan, sticky=sticky)
-
-class LogisticsDashboard:
-    def __init__(self, targetScreen):
-        self.frame = tkinter.Frame(targetScreen, highlightbackground="black", highlightthickness=2)
-        self.grid = self.frame.grid
-
-        self.label = tkinter.Label(self.frame, text="Colonisation Dashboard", font=largeLabelFont)
-        self.label.pack()
-
-        self.productionConsumptionView = tkinter.Label(self.frame, text="(Production and consumption values for different resources go here.)")
-        self.productionConsumptionView.pack()
-
-        self.colonyCrewCounter = tkinter.StringVar(value="(Crew amount goes here)")
-        self.colonyCrewCounterLabel = tkinter.Label(self.frame, textvariable=self.colonyCrewCounter)
-        self.colonyCrewCounterLabel.pack()
-
-        self.selectedBody = tkinter.StringVar(value="Select Planet/Moon")
-        self.bodySelector = tkinter.OptionMenu(self.frame, self.selectedBody, *[body.displayedName for body in game.celestialBodies])
-        self.bodySelector.pack()
-    
-    def update(self):
-        if self.selectedBody.get() == "Select Planet/Moon":
-            return
-        nameOfSelectedBody = game.bodyDisplayedNameToNameConverter(self.selectedBody.get())
-        crewNumbersFound = [colony.crew for colony in game.saveData.colonies if colony.body == nameOfSelectedBody]
-        if len(crewNumbersFound) > 1:
-            raise RuntimeError(f"There are {len(crewNumbersFound)} colonies that are on the body {nameOfSelectedBody}. There should be 1")
-        elif len(crewNumbersFound) == 1:
-            self.colonyCrewCounter.set(f"Crew: {crewNumbersFound[0]}")
-        else:
-            self.colonyCrewCounter.set(f"{nameOfSelectedBody} has no colony.")
-
-class LabeledDropdown:
-    def __init__(self, frame: tkinter.Misc, row: int, column: int, label: str, defaultValue: str, *options: str):
-        self.label = tkinter.Label(frame, text=label)
-        self.label.grid(row=row, column=column)
-        self.stringVar = tkinter.StringVar(value=defaultValue)
-        self.get = self.stringVar.get
-        self.Dropdown = tkinter.OptionMenu(frame, self.stringVar, *options)
-        self.Dropdown.grid(row=row, column=column+1, sticky="news")
-
-class LabeledEntry:
-    def __init__(self, frame: tkinter.Misc, row: int, column: int, label: str, defaultValue: str):
-        self.label = tkinter.Label(frame, text=label)
-        self.label.grid(row=row, column=column)
-        self.stringVar = tkinter.StringVar(value=defaultValue)
-        self.get = self.stringVar.get
-        self.entry = tkinter.Entry(frame, textvariable=self.stringVar)
-        self.entry.grid(row=row, column=column+1, sticky="news")
-
-class DrawingBoard:
-
-    class ShipStatDisplay:
-        def __init__(self, targetFrame: FrameClass):
-            self.frame = tkinter.Frame(targetFrame)
-            self.grid = self.frame.grid
-
-        def update(self, design: game.SpacecraftDesign):
-            nextRow = iter(range(100)).__next__
-            for stat, value in design.statDict.items():
-                row = nextRow()
-                statLabel = tkinter.Label(self.frame, text=stat)
-                statLabel.grid(row=row, column=0)
-                valueLabel = tkinter.Label(self.frame, text=str(value))
-                valueLabel.grid(row=row, column=1)
-
-    def __init__(self, targetFrame: FrameClass):
-        self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
-        self.grid = self.frame.grid
-
-        self.label = tkinter.Label(self.frame, text="Drawing Board", font=largeLabelFont)
-        self.label.grid(row=0, column=0, columnspan=2)
-
-        self.shipName = LabeledEntry(self.frame, 1,0, "Ship Name: ", "Untitled Spacecraft")
-        self.controlUnit = LabeledDropdown(self.frame, 2, 0, "Ship's contol Unit: ", "Select a Contol Unit", *[part.name for part in game.Parts.controlUnits])
-        self.thrusters = LabeledDropdown(self.frame, 3, 0, "Ship's Thrusters: ", "Select a type of Thruster", *[part.name for part in game.Parts.thrusters])
-        self.fuelTank = LabeledDropdown(self.frame, 4,0, "Fuel Tank: ", "Select Fuel Tank", *[part.name for part in game.Parts.fuelTanks])
-        self.evalShipButton = tkinter.Button(self.frame, command=self.evaluateShip, text="Evaluate Ship")
-        self.evalShipButton.grid(row=5, column=0)
-        self.saveShipButton = tkinter.Button(self.frame, command=self.saveShip, text="Save Ship")
-        self.saveShipButton.grid(row=5, column=1)
-        self.shipStatDisplay = self.ShipStatDisplay(self.frame)
-        self.shipStatDisplay.grid(row=6,column=0, columnspan=2)
-    
-    def getShipDesign(self):
-        return game.SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), (self.fuelTank.get(), (10,10)))
-
-    def evaluateShip(self):
-        self.shipStatDisplay.update(self.getShipDesign())
-
-    def saveShip(self):
-        game.saveData.spacecraftDesigns.append(self.getShipDesign())
-
-class ResearchMenu:
-    class ResearchNodeText:
-        def __init__(self, techtreeNode: game.TechTreeNode, targetFrame):
-            self.node = techtreeNode
-            self.frame = tkinter.Frame(targetFrame)
-            self.grid = self.frame.grid
-
-            self.nameLabel = tkinter.Label(self.frame, text=techtreeNode.displayedName)
-            self.nameLabel.grid(row=0,column=0)
-            self.descLabel = tkinter.Label(self.frame, text=techtreeNode.desc, font=smallLabelFont)
-            self.descLabel.grid(row=1,column=0)
-
-    def __init__(self, targetFrame, researchNodes: list[game.TechTreeNode]):
-        nextRow = iter(range(100)).__next__ # Raise number if needed (probebly not)
-
-        self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
-
-        self.label = tkinter.Label(self.frame, text="Research Menu", font=largeLabelFont)
-        self.label.grid(row=nextRow(),column=0, columnspan=2)
-
-        self.researcherCounter = tkinter.StringVar(value="Resaecher count goes heer.")
-        self.researcherCounterLabel = tkinter.Label(self.frame, textvariable=self.researcherCounter)
-        researcherCounterRow = nextRow()
-        self.researcherCounterLabel.grid(row=researcherCounterRow, column=0)
-
-        self.researchSpeedVar = tkinter.StringVar(value="Reaeaearch spead gooes hear.")
-        self.researchSpeedLabel = tkinter.Label(self.frame, textvariable=self.researchSpeedVar)
-        self.researchSpeedLabel.grid(row=researcherCounterRow,column=1)
-
-        researchNodeTexts = [self.ResearchNodeText(node, self.frame) for node in researchNodes]
-        for researchNodeText in researchNodeTexts:
-            row = nextRow()
-            researchNodeText.grid(row=row,column=0)
-            addToQueueButton = tkinter.Button(self.frame,command=researchNodeText.node.addToQueue, text="add to queue")
-            addToQueueButton.grid(row=row,column=1)
-
-    def grid(self, row: int, column: int, rowSpan = 1, columnSpan = 1, sticky: str = ""):
-        self.frame.grid(row=row, column=column, rowspan=rowSpan, columnspan=columnSpan, sticky=sticky)
 
 colonyManagement = ColonyManagement(screen)  #A 2 by 2 grid.
 colonyManagement.grid(row=1, column=0, sticky="news", rowSpan=2)
