@@ -9,14 +9,17 @@ class DrawingBoard:
             self.frame = tkinter.Frame(targetFrame)
             self.grid = self.frame.grid
 
-        def update(self, design: SpacecraftDesign):
-            nextRow = iter(range(100)).__next__
-            for stat, value in design.statDict.items():
-                row = nextRow()
-                statLabel = tkinter.Label(self.frame, text=stat)
-                statLabel.grid(row=row, column=0)
-                valueLabel = tkinter.Label(self.frame, text=str(value))
-                valueLabel.grid(row=row, column=1)
+        def update(self, design: SpacecraftDesign|None):
+            if design is None:
+                return
+            else:
+                nextRow = iter(range(100)).__next__
+                for stat, value in design.statDict.items():
+                    row = nextRow()
+                    statLabel = tkinter.Label(self.frame, text=stat)
+                    statLabel.grid(row=row, column=0)
+                    valueLabel = tkinter.Label(self.frame, text=str(value))
+                    valueLabel.grid(row=row, column=1)
 
     def __init__(self, targetFrame: FrameClass):
         self.frame = tkinter.Frame(targetFrame, highlightbackground="black", highlightthickness=2)
@@ -35,12 +38,24 @@ class DrawingBoard:
         self.saveShipButton.grid(row=5, column=1)
         self.shipStatDisplay = self.ShipStatDisplay(self.frame)
         self.shipStatDisplay.grid(row=6,column=0, columnspan=2)
+
+        self.fuelTankDiameter = LabeledEntry(self.frame, 4,2, "Diameter", "1.75")
+        self.fuelTankHeight = LabeledEntry(self.frame, 4,4, "Height", "10")
     
     def getShipDesign(self):
-        return SpacecraftDesign(self.shipName.get(), "Lander", self.controlUnit.get(), (self.thrusters.get(), 1), (self.fuelTank.get(), (10,10)))
+        try:
+            return SpacecraftDesign(self.shipName.get(), 
+                                    "Lander", 
+                                    self.controlUnit.get(), 
+                                    (self.thrusters.get(), 1), 
+                                    (self.fuelTank.get(), (self.fuelTankDiameter.get(),self.fuelTankHeight.get())))
+        except RuntimeError:
+            return None
 
     def evaluateShip(self):
         self.shipStatDisplay.update(self.getShipDesign())
 
     def saveShip(self):
-        saveData.spacecraftDesigns.append(self.getShipDesign())
+        design = self.getShipDesign()
+        if design is not None:
+            saveData.spacecraftDesigns.append(design)
